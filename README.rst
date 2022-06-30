@@ -4,16 +4,16 @@ aria2 - The ultra fast download utility
 Compile / Install
 ----------
 
-sudo pacman -S --needed autoconf automake binutils c-ares cppunit expat gcc glibc gmp gnutls libgcrypt libgpg-error libressl libssh2 libtool libxml2 m4 mk-configure nettle openssl pkg-config pkgconf pkgconfig python-commonmark python-docutils python-future python-platformdirs python-pygments python-rich python-tenacity python-typing_extensions sqlite xorg-util-macros zlib
+    $ sudo pacman -S --needed autoconf automake binutils c-ares cppunit expat gcc glibc gmp gnutls libgcrypt libgpg-error libressl libssh2 libtool libxml2 m4 mk-configure nettle openssl pkg-config pkgconf pkgconfig python-commonmark python-docutils python-future python-platformdirs python-pygments python-rich python-tenacity python-typing_extensions sqlite xorg-util-macros zlib
 
-pip install -U Sphinx
+    $ pip install -U Sphinx 
 
-# gclone = https://github.com/JJenkx/Personal/blob/main/gclone
-gclone https://github.com/JJenkx/aria2.git && cd aria2
+    # gclone = https://github.com/JJenkx/Personal/blob/main/gclone
+    $ gclone https://github.com/JJenkx/aria2.git && cd aria2
 
-./configure --with-ca-bundle='/etc/ssl/certs/ca-certificates.crt'
+    $ ./configure --with-ca-bundle='/etc/ssl/certs/ca-certificates.crt'
 
-make -j$((`nproc`+1)) && sudo make install
+    $ make -j$((`nproc`+1)) && sudo make install
 
 
 Disclaimer
