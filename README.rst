@@ -9,12 +9,15 @@ Compile / Install
     $ pip install -U Sphinx 
 
     # gclone = https://github.com/JJenkx/Personal/blob/main/gclone
+    
     $ gclone https://github.com/JJenkx/aria2.git && cd aria2
 
     $ ./configure --with-ca-bundle='/etc/ssl/certs/ca-certificates.crt'
 
     $ make -j$((`nproc`+1)) && sudo make install
+
     
+
 
 Disclaimer
 ----------
