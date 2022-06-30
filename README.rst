@@ -20,7 +20,7 @@ Note:
     $ ./configure --with-ca-bundle='/etc/ssl/certs/ca-certificates.crt'
 
 5.
-    `$ make -j$((`nproc`+1)) && sudo make install`
+    ``$ make -j$((`nproc`+1)) && sudo make install``
 
 
 
