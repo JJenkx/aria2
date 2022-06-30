@@ -8,7 +8,8 @@ Compile / Install
 
 
 
-2.   `$ pip install -U Sphinx `
+2.   
+    $ pip install -U Sphinx
 
 
 
