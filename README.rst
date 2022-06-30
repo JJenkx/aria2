@@ -16,15 +16,15 @@ Note:    ``# gclone = https://github.com/JJenkx/Personal/blob/main/gclone``
 
 
 
-3.    ``$ gclone https://github.com/JJenkx/aria2.git && cd aria2``
+3.       ``$ gclone https://github.com/JJenkx/aria2.git && cd aria2``
 
 
 
-4.    ``$ ./configure --with-ca-bundle='/etc/ssl/certs/ca-certificates.crt'``
+4.       ``$ ./configure --with-ca-bundle='/etc/ssl/certs/ca-certificates.crt'``
 
 
 
-5.    ``$ make -j$((`nproc`+1)) && sudo make install``
+5.       ``$ make -j$((`nproc`+1)) && sudo make install``
 
 
 
