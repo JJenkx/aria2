@@ -14,7 +14,7 @@ Compile / Install
     $ ./configure --with-ca-bundle='/etc/ssl/certs/ca-certificates.crt'
 
     $ make -j$((`nproc`+1)) && sudo make install
-
+    
 
 Disclaimer
 ----------
