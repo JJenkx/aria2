@@ -10,7 +10,7 @@ Compile / Install::
 
 
 2.:
-       $ pip install -U Sphinx
+       ``$ pip install -U Sphinx``
 
 
 
