@@ -8,21 +8,31 @@ Compile / Install
 
     ``$ sudo pacman -S --needed autoconf automake binutils c-ares cppunit expat gcc glibc gmp gnutls libgcrypt libgpg-error libressl libssh2 libtool libxml2 m4 mk-configure nettle openssl pkg-config pkgconf pkgconfig python-commonmark python-docutils python-future python-platformdirs python-pygments python-rich python-tenacity python-typing_extensions sqlite xorg-util-macros zlib``
 
+
+
 2.
 
     ``$ pip install -U Sphinx ``
+
+
 
 Note:
 
     ``# gclone = https://github.com/JJenkx/Personal/blob/main/gclone``
 
+
+
 3.
 
     ``$ gclone https://github.com/JJenkx/aria2.git && cd aria2``
 
+
+
 4.
 
     ``$ ./configure --with-ca-bundle='/etc/ssl/certs/ca-certificates.crt'``
+
+
 
 5.
 
