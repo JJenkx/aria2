@@ -1054,7 +1054,7 @@ bool SocketCore::sshHandshake(const std::string& hashType,
     return false;
   }
   if (rv == SSH_ERR_ERROR) {
-    throw DL_ABORT_EX(fmt("SSH handshake failure: %s",
+    throw DL_RETRY_EX(fmt("SSH handshake failure: %s",
                           sshSession_->getLastErrorString().c_str()));
   }
   if (!hashType.empty()) {
