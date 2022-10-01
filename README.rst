@@ -1,4 +1,4 @@
-aria2 - The ultra fast download utility
+aria2 - The ultra fast download utility. Modded to remove limits a be more aggressive with retry.
 =======================================
 
 Arch: Compile / Install::
@@ -31,6 +31,9 @@ Note:    ``# gclone = https://github.com/JJenkx/Personal/blob/main/gclone``
 6.       ``$ make -j$((`nproc`+1)) && sudo make install``
 
 
+-----
+
+
 Example Usage:
 
 ::
@@ -56,30 +59,44 @@ Example Usage:
 
 
 
+::
 
+    noglob \
+    yt-dlp \
+    --external-downloader aria2c \
+    --downloader-args \
+    "aria2c: \
+        --check-certificate=false \
+        --console-log-level=notice \
+        --continue=true \
+        --download-result=full \
+        --lowest-speed-limit=10K \
+        --max-concurrent-downloads=1 \
+        --max-connection-per-server=32 \
+        --max-tries=0 \
+        --min-split-size=1K \
+        --no-want-digest-header=true \
+        --piece-length=256k \
+        --retry-on-400=true \
+        --retry-on-403=true \
+        --retry-on-406=true \
+        --retry-on-unknown=true \
+        --retry-wait=0 \
+        --split=32 \
+        --stream-piece-selector=geom \
+        --timeout=10 \
+        --user-agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.55 Safari/537.36' " \
+    --download-archive \
+    $HOME/Videos/yt-dlp/.yt-dlp-archived-done.txt \
+    --exec 'nohup mpv '%(filepath)q' &>/dev/null & ' \
+    --ffmpeg-location /home/jjenkx/.local/bin.notpath/ \
+    --output '$HOME/Videos/yt-dlp/%(title)s_%(channel)s_%(upload_date>%Y-%m-%d)s_%(duration>%H-%M-%S)s_%(resolution)s.%(ext)s' \
+    --prefer-free-formats \
+    --remux-video mkv \
+    --restrict-filenames \
+    https://www.youtube.com/watch?v=OFApPqQq-xA
+    
 -----
-
-
-
-.. code-block:: sh
-    aria2c \
-    --continue=true \
-    --ftp-passwd=mypass \
-    --max-concurrent-downloads=1 \
-    --max-connection-per-server=128 \
-    --max-tries=0 \
-    --min-split-size=1K \
-    --piece-length=256k \
-    --retry-on-400=true \
-    --retry-on-403=true \
-    --retry-on-406=true \
-    --retry-on-unknown=true \
-    --retry-wait=0 \
-    --split=128 \
-    --stream-piece-selector=geom \
-    --timeout=10 \
-    sftp://jjenkx@192.168.1.1/home/jjenkx/Downloads/manjaro-kde-21.3.7-220816-linux515.iso
-
 
 Disclaimer
 ----------
