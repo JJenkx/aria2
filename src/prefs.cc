@@ -334,7 +334,7 @@ PrefPtr PREF_RETRY_ON_403 = makePref("retry-on-403");
 PrefPtr PREF_RETRY_ON_406 = makePref("retry-on-406");
 // value: true | false
 PrefPtr PREF_RETRY_ON_UNKNOWN = makePref("retry-on-unknown");
-// value: true | false
+// value: string
 PrefPtr PREF_ASYNC_DNS_SERVER = makePref("async-dns-server");
 // value: true | false
 PrefPtr PREF_SHOW_CONSOLE_READOUT = makePref("show-console-readout");
