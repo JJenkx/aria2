@@ -47,22 +47,18 @@ class SocketCore;
 class HttpListenCommand : public Command {
 private:
   DownloadEngine* e_;
-  int fd_;
   int family_;
-  uint16_t port_;
   std::shared_ptr<SocketCore> serverSocket_;
   bool secure_;
 
 public:
-  HttpListenCommand(cuid_t cuid, DownloadEngine* e, int family, uint16_t port, bool secure);
-
-  HttpListenCommand(cuid_t cuid, DownloadEngine* e, int fd, bool secure);
+  HttpListenCommand(cuid_t cuid, DownloadEngine* e, int family, bool secure);
 
   virtual ~HttpListenCommand();
 
   virtual bool execute() CXX11_OVERRIDE;
 
-  bool listen();
+  bool bindPort(uint16_t port);
 };
 
 } // namespace aria2
