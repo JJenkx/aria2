@@ -31,8 +31,54 @@ Note:    ``# gclone = https://github.com/JJenkx/Personal/blob/main/gclone``
 6.       ``$ make -j$((`nproc`+1)) && sudo make install``
 
 
+Example Usage:
+
+::
+
+    aria2c \
+    --continue=true \
+    --ftp-passwd=mypass \
+    --max-concurrent-downloads=1 \
+    --max-connection-per-server=128 \
+    --max-tries=0 \
+    --min-split-size=1K \
+    --piece-length=256k \
+    --retry-on-400=true \
+    --retry-on-403=true \
+    --retry-on-406=true \
+    --retry-on-unknown=true \
+    --retry-wait=0 \
+    --split=128 \
+    --stream-piece-selector=geom \
+    --timeout=10 \
+    sftp://jjenkx@192.168.1.1/home/jjenkx/Downloads/manjaro-kde-21.3.7-220816-linux515.iso
 
 
+
+
+
+-----
+
+
+
+.. code-block:: sh
+    aria2c \
+    --continue=true \
+    --ftp-passwd=mypass \
+    --max-concurrent-downloads=1 \
+    --max-connection-per-server=128 \
+    --max-tries=0 \
+    --min-split-size=1K \
+    --piece-length=256k \
+    --retry-on-400=true \
+    --retry-on-403=true \
+    --retry-on-406=true \
+    --retry-on-unknown=true \
+    --retry-wait=0 \
+    --split=128 \
+    --stream-piece-selector=geom \
+    --timeout=10 \
+    sftp://jjenkx@192.168.1.1/home/jjenkx/Downloads/manjaro-kde-21.3.7-220816-linux515.iso
 
 
 Disclaimer
