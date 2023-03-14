@@ -20,15 +20,23 @@ Note:    ``# gclone = https://github.com/JJenkx/Personal/blob/main/gclone``
 
 
 
-4.       ``$ autoreconf -i``
+4.       ``$ autoupdate``
 
 
 
-5.       ``$ ./configure --with-ca-bundle='/etc/ssl/certs/ca-certificates.crt'``
+5.       ``$ autoreconf -i``
 
 
 
-6.       ``$ make -j$((`nproc`+1)) && sudo make install``
+6.       ``$ ./configure --with-ca-bundle='/etc/ssl/certs/ca-certificates.crt'``
+
+
+
+7.       ``$ make -j$((`nproc`+1))``
+
+
+
+8.       ``$ sudo make install``
 
 
 -----
