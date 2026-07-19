@@ -1,0 +1,45 @@
+# Build a fully static x86_64 aria2 binary against musl libc using Alpine.
+#
+# The resulting /aria2/src/aria2c has no shared-library dependencies and runs
+# on any x86_64 Linux distribution. Extract it with:
+#
+#   docker build -t aria2-linux-musl - < Dockerfile.linux-musl
+#   docker run --rm -v /path/to/dest:/out aria2-linux-musl cp /aria2/src/aria2c /out
+
+FROM alpine:3.20
+
+RUN apk add --no-cache \
+      build-base autoconf automake libtool pkgconf gettext-dev git \
+      linux-headers \
+      openssl-dev openssl-libs-static \
+      c-ares-dev c-ares-static \
+      zlib-dev zlib-static \
+      sqlite-dev sqlite-static \
+      expat-dev expat-static \
+      libssh2-dev libssh2-static
+
+ARG ARIA2_REPO=aria2/aria2
+ARG ARIA2_VERSION=master
+
+# Fully static build. Uses OpenSSL (which also provides the bignum for
+# BitTorrent, so libgmp is not needed, mirroring the Android build).
+# ARIA2_STATIC=yes makes aria2 link with -all-static; pkg-config --static
+# pulls in the transitive static dependencies (e.g. -lz, -lcrypto).
+RUN git clone -b $ARIA2_VERSION --depth 1 https://github.com/$ARIA2_REPO aria2 && \
+    cd aria2 && \
+    autoreconf -i && \
+    PKG_CONFIG="pkg-config --static" \
+    ./configure \
+      --enable-static --disable-shared \
+      --enable-bittorrent --enable-metalink --disable-nls \
+      --with-openssl --without-gnutls \
+      --with-libcares --with-sqlite3 --with-libz \
+      --with-libexpat --with-libssh2 \
+      --without-libgmp --without-libxml2 --without-libgcrypt --without-libnettle \
+      ARIA2_STATIC=yes \
+      CFLAGS="-Os" CXXFLAGS="-Os" LDFLAGS="-s" && \
+    make -j$(nproc) && \
+    strip src/aria2c && \
+    file src/aria2c && \
+    ( ldd src/aria2c || true ) && \
+    ./src/aria2c -v
