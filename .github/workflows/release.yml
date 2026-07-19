@@ -146,7 +146,7 @@ jobs:
         id: pkg
         run: |
           VERSION=$(sed -n 's/^AC_INIT(\[aria2\],\[\([^]]*\)\].*/\1/p' configure.ac)
-          DIST="aria2-$VERSION-linux-x86_64-static-build1"
+          DIST="aria2-$VERSION-linux-x86_64-musl-static-build1"
           mkdir -p "dist/$DIST"
           cp out/aria2c "dist/$DIST/"
           cp AUTHORS COPYING LICENSE.OpenSSL NEWS README.rst "dist/$DIST/"
@@ -159,7 +159,51 @@ jobs:
 
       - uses: actions/upload-artifact@v7
         with:
-          name: linux-x86_64
+          name: linux-x86_64-musl
+          path: dist/*.tar.gz
+
+      - name: Upload to release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --generate-notes 2>/dev/null || true
+          gh release upload "$GITHUB_REF_NAME" dist/*.tar.gz --clobber
+
+  linux-glibc:
+    name: linux (x86_64, fully static glibc)
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build (Docker, fully static glibc)
+        run: |
+          docker build \
+            --build-arg ARIA2_REPO=${{ github.repository }} \
+            --build-arg ARIA2_VERSION=${{ github.ref_name }} \
+            -t aria2-linux-glibc - < Dockerfile.linux-glibc
+          mkdir -p out
+          docker run --rm -v "$PWD/out:/out" aria2-linux-glibc \
+            cp /aria2/src/aria2c /out
+
+      - name: Package
+        id: pkg
+        run: |
+          VERSION=$(sed -n 's/^AC_INIT(\[aria2\],\[\([^]]*\)\].*/\1/p' configure.ac)
+          DIST="aria2-$VERSION-linux-x86_64-glibc-static-build1"
+          mkdir -p "dist/$DIST"
+          cp out/aria2c "dist/$DIST/"
+          cp AUTHORS COPYING LICENSE.OpenSSL NEWS README.rst "dist/$DIST/"
+          (cd dist && tar czf "$DIST.tar.gz" "$DIST" && rm -rf "$DIST")
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: 'dist/*.tar.gz'
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: linux-x86_64-glibc
           path: dist/*.tar.gz
 
       - name: Upload to release
