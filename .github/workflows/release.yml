@@ -45,7 +45,6 @@ jobs:
           docker build \
             --build-arg ARIA2_REPO=${{ github.repository }} \
             --build-arg ARIA2_VERSION=${{ github.ref_name }} \
-            --build-arg ARIA2_REF=${{ github.ref }} \
             --build-arg HOST=${{ matrix.host }} \
             -t aria2-mingw-${{ matrix.host }} - < Dockerfile.mingw
           mkdir -p out
@@ -188,6 +187,8 @@ jobs:
             CPPFLAGS="-I$DEPS_PREFIX/include" \
             LDFLAGS="-L$DEPS_PREFIX/lib" \
             PKG_CONFIG_PATH="$DEPS_PREFIX/lib/pkgconfig"
+          # Build the bundled deps (wslay for WebSocket) before src, then the binary.
+          make -C deps -j"$JOBS"
           make -C src -j"$JOBS" aria2c
           strip src/aria2c
           ./src/aria2c -v
