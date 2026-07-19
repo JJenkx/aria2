@@ -38,14 +38,13 @@ jobs:
           - host: x86_64-w64-mingw32
             label: win-64bit
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Build (Docker, static mingw)
         run: |
           docker build \
             --build-arg ARIA2_REPO=${{ github.repository }} \
             --build-arg ARIA2_VERSION=${{ github.ref_name }} \
-            --build-arg ARIA2_REF=${{ github.ref }} \
             --build-arg HOST=${{ matrix.host }} \
             -t aria2-mingw-${{ matrix.host }} - < Dockerfile.mingw
           mkdir -p out
@@ -65,11 +64,11 @@ jobs:
           echo "asset=dist/$DIST.zip" >> "$GITHUB_OUTPUT"
 
       - name: Attest build provenance
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@v4
         with:
           subject-path: ${{ steps.pkg.outputs.asset }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.label }}
           path: dist/*.zip
@@ -86,7 +85,7 @@ jobs:
     name: android (aarch64)
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Build (Docker, static android)
         run: |
@@ -110,11 +109,11 @@ jobs:
           echo "asset=dist/$DIST.zip" >> "$GITHUB_OUTPUT"
 
       - name: Attest build provenance
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@v4
         with:
           subject-path: ${{ steps.pkg.outputs.asset }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: android-aarch64
           path: dist/*.zip
@@ -131,7 +130,7 @@ jobs:
     name: macos (arm64, static deps + AppleTLS)
     runs-on: macos-14  # Apple Silicon (arm64)
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install build tools
         run: |
@@ -145,7 +144,7 @@ jobs:
           PREFIX="$PWD/deps-prefix"
           JOBS=$(sysctl -n hw.ncpu)
           mkdir -p "$PREFIX" src-deps && cd src-deps
-          fetch() { curl -fL --retry 3 -o "$1" "$2"; }
+          fetch() { curl -fL --retry 6 --retry-all-errors --retry-delay 5 --connect-timeout 30 -o "$1" "$2"; }
 
           fetch zlib.tar.gz https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.gz
           tar xf zlib.tar.gz
@@ -164,7 +163,7 @@ jobs:
           tar xf sqlite.tar.gz
           ( cd sqlite-autoconf-3470200 && ./configure --prefix="$PREFIX" --enable-static --disable-shared && make -j"$JOBS" && make install )
 
-          fetch gmp.tar.xz https://gmplib.org/download/gmp/gmp-6.3.0.tar.xz
+          fetch gmp.tar.xz https://ftp.gnu.org/gnu/gmp/gmp-6.3.0.tar.xz
           tar xf gmp.tar.xz
           ( cd gmp-6.3.0 && ./configure --prefix="$PREFIX" --enable-static --disable-shared --with-pic && make -j"$JOBS" && make install )
 
@@ -188,6 +187,8 @@ jobs:
             CPPFLAGS="-I$DEPS_PREFIX/include" \
             LDFLAGS="-L$DEPS_PREFIX/lib" \
             PKG_CONFIG_PATH="$DEPS_PREFIX/lib/pkgconfig"
+          # Build the bundled deps (wslay for WebSocket) before src, then the binary.
+          make -C deps -j"$JOBS"
           make -C src -j"$JOBS" aria2c
           strip src/aria2c
           ./src/aria2c -v
@@ -205,11 +206,11 @@ jobs:
           ( cd dist && tar czf "$DIST.tar.gz" "$DIST" && rm -rf "$DIST" )
 
       - name: Attest build provenance
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@v4
         with:
           subject-path: 'dist/*.tar.gz'
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: macos-arm64
           path: dist/*.tar.gz

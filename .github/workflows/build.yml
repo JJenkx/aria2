@@ -43,6 +43,9 @@ jobs:
     - name: MacOS setup
       if: runner.os == 'macOS'
       run: |
+        # The runner image ships an untrusted aws/tap; untap it so brew does
+        # not emit tap-trust warnings.
+        brew untap aws/tap 2>/dev/null || true
         brew install cppunit gettext openssl libssh2 c-ares sqlite3 \
           autoconf automake pkg-config libtool
     - name: Setup clang (Linux)
