@@ -230,6 +230,36 @@ HTTP/FTP/SFTP Options
   :option:`--piece-length` if you want more connections for the final
   chunk.  Default: ``false``
 
+  .. note::
+
+    Whether this helps depends entirely on the server. It is worthwhile
+    only when the server limits the speed of *each connection* (so more
+    connections mean more total throughput). On such a server the normal
+    end-of-file collapse to one connection makes the tail crawl at the
+    single-connection rate; this option avoids that. Measured against a
+    per-connection-throttled server (~2 MB/s per connection), enabling it
+    was about 25% faster than the defaults and up to 4x faster than a
+    large :option:`--min-split-size <-k>`.
+
+    On a server that is limited by your total bandwidth instead (a single
+    connection already saturates the link), extra connections near the end
+    add nothing, and this option is neutral -- it will not speed the
+    download up, and may add slight overhead. Leave it off for such hosts.
+
+    To tell which case you have, download the same file with increasing
+    :option:`--split <-s>`/:option:`--max-connection-per-server <-x>` (for
+    example 1, 2, 4, 8, 16) and watch the speed. If it keeps rising with
+    more connections, the server is per-connection limited and this option
+    (plus a high :option:`-x <--max-connection-per-server>`) helps. If the
+    speed plateaus after a couple of connections, it will not.
+
+    Recommended for a per-connection-throttled server::
+
+      aria2c -x16 -s16 --min-split-size=1M --adaptive-min-split-size=true URL
+
+    Because :option:`--max-connection-per-server <-x>` has no upper limit,
+    raising ``-x`` further can help on heavily throttled servers.
+
 
 .. option:: --netrc-path=<FILE>
 
