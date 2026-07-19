@@ -1,0 +1,44 @@
+# Build a fully static x86_64 aria2 binary against glibc on Ubuntu.
+#
+# The resulting /aria2/src/aria2c has no shared-library dependencies. It uses
+# c-ares for DNS, which avoids the usual glibc static getaddrinfo/NSS problem.
+# Extract it with:
+#
+#   docker build -t aria2-linux-glibc - < Dockerfile.linux-glibc
+#   docker run --rm -v /path/to/dest:/out aria2-linux-glibc cp /aria2/src/aria2c /out
+
+FROM ubuntu:22.04
+
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      build-essential autoconf automake autotools-dev autopoint libtool pkg-config \
+      git ca-certificates \
+      libssl-dev zlib1g-dev libc-ares-dev libsqlite3-dev libexpat1-dev libssh2-1-dev \
+      libgcrypt20-dev libgpg-error-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+ARG ARIA2_REPO=aria2/aria2
+ARG ARIA2_VERSION=master
+
+# Fully static build. Uses OpenSSL (which also provides the bignum for
+# BitTorrent, so libgmp is not needed). ARIA2_STATIC=yes links with
+# -all-static; pkg-config --static pulls in the transitive static
+# dependencies (e.g. -lz, -lcrypto, -lssh2).
+RUN git clone -b $ARIA2_VERSION --depth 1 https://github.com/$ARIA2_REPO aria2 && \
+    cd aria2 && \
+    autoreconf -i && \
+    PKG_CONFIG="pkg-config --static" \
+    ./configure \
+      --enable-static --disable-shared \
+      --enable-bittorrent --enable-metalink --disable-nls \
+      --with-openssl --without-gnutls \
+      --with-libcares --with-sqlite3 --with-libz \
+      --with-libexpat --with-libssh2 \
+      --without-libgmp --without-libxml2 --without-libgcrypt --without-libnettle \
+      ARIA2_STATIC=yes \
+      CFLAGS="-Os" CXXFLAGS="-Os" LDFLAGS="-s" && \
+    make -j$(nproc) && \
+    strip src/aria2c && \
+    file src/aria2c && \
+    ( ldd src/aria2c || true ) && \
+    ./src/aria2c -v
