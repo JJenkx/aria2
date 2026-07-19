@@ -119,11 +119,12 @@ bool Platform::setUp()
 
 #ifdef HAVE_OPENSSL
 #  if OPENSSL_VERSION_NUMBER >= 0x30000000L
-  // RC4 is in the legacy provider.
+  // RC4 is in the legacy provider. It is an external, dynamically loaded
+  // module that may be unavailable (for example in a fully static build,
+  // which cannot dlopen it). Treat a load failure as non-fatal: aria2 keeps
+  // working, only RC4 (used by BitTorrent message stream encryption) becomes
+  // unavailable.
   legacy_provider_ = OSSL_PROVIDER_load(nullptr, "legacy");
-  if (!legacy_provider_) {
-    throw DL_ABORT_EX("OSSL_PROVIDER_load 'legacy' failed.");
-  }
 
   default_provider_ = OSSL_PROVIDER_load(nullptr, "default");
   if (!default_provider_) {
