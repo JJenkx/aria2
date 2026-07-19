@@ -38,7 +38,7 @@ jobs:
           - host: x86_64-w64-mingw32
             label: win-64bit
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Build (Docker, static mingw)
         run: |
@@ -65,11 +65,11 @@ jobs:
           echo "asset=dist/$DIST.zip" >> "$GITHUB_OUTPUT"
 
       - name: Attest build provenance
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@v4
         with:
           subject-path: ${{ steps.pkg.outputs.asset }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.label }}
           path: dist/*.zip
@@ -86,7 +86,7 @@ jobs:
     name: android (aarch64)
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Build (Docker, static android)
         run: |
@@ -110,11 +110,11 @@ jobs:
           echo "asset=dist/$DIST.zip" >> "$GITHUB_OUTPUT"
 
       - name: Attest build provenance
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@v4
         with:
           subject-path: ${{ steps.pkg.outputs.asset }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: android-aarch64
           path: dist/*.zip
@@ -131,7 +131,7 @@ jobs:
     name: macos (arm64, static deps + AppleTLS)
     runs-on: macos-14  # Apple Silicon (arm64)
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install build tools
         run: |
@@ -164,7 +164,7 @@ jobs:
           tar xf sqlite.tar.gz
           ( cd sqlite-autoconf-3470200 && ./configure --prefix="$PREFIX" --enable-static --disable-shared && make -j"$JOBS" && make install )
 
-          fetch gmp.tar.xz https://gmplib.org/download/gmp/gmp-6.3.0.tar.xz
+          fetch gmp.tar.xz https://ftp.gnu.org/gnu/gmp/gmp-6.3.0.tar.xz
           tar xf gmp.tar.xz
           ( cd gmp-6.3.0 && ./configure --prefix="$PREFIX" --enable-static --disable-shared --with-pic && make -j"$JOBS" && make install )
 
@@ -205,11 +205,11 @@ jobs:
           ( cd dist && tar czf "$DIST.tar.gz" "$DIST" && rm -rf "$DIST" )
 
       - name: Attest build provenance
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@v4
         with:
           subject-path: 'dist/*.tar.gz'
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: macos-arm64
           path: dist/*.tar.gz
