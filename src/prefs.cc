@@ -317,6 +317,8 @@ PrefPtr PREF_MAX_CONNECTION_PER_SERVER = makePref("max-connection-per-server");
 // value: 1*digit
 PrefPtr PREF_MIN_SPLIT_SIZE = makePref("min-split-size");
 // value: true | false
+PrefPtr PREF_ADAPTIVE_MIN_SPLIT_SIZE = makePref("adaptive-min-split-size");
+// value: true | false
 PrefPtr PREF_CONDITIONAL_GET = makePref("conditional-get");
 // value: true | false
 PrefPtr PREF_SELECT_LEAST_USED_HOST = makePref("select-least-used-host");

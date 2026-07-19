@@ -751,6 +751,13 @@
     "                              If SIZE is 15M, since 2*15M > 20MiB, aria2 does\n" \
     "                              not split file and download it using 1 source.\n" \
     "                              You can append K or M(1K = 1024, 1M = 1024K).")
+#define TEXT_ADAPTIVE_MIN_SPLIT_SIZE            \
+  _(" --adaptive-min-split-size[=true|false] Progressively reduce the effective\n" \
+    "                              --min-split-size as the download nears completion,\n" \
+    "                              down to a single piece (--piece-length). This keeps\n" \
+    "                              aria2 splitting the remaining data into new\n" \
+    "                              connections all the way to the end of the file\n" \
+    "                              instead of collapsing to 1 connection for the tail.")
 #define TEXT_CONDITIONAL_GET                    \
   _(" --conditional-get[=true|false] Download file only when the local file is older\n" \
     "                              than remote file. Currently, this function has\n" \

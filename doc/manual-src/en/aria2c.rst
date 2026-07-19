@@ -183,6 +183,8 @@ HTTP/FTP/SFTP Options
 .. option:: -x, --max-connection-per-server=<NUM>
 
   The maximum number of connections to one server for each download.
+  There is no upper limit; be aware that many servers reject an
+  excessive number of simultaneous connections.
   Default: ``1``
 
 .. option:: --max-file-not-found=<NUM>
@@ -210,7 +212,23 @@ HTTP/FTP/SFTP Options
   using 2 sources(if :option:`--split <-s>` >= 2, of course).  If SIZE is 15M,
   since 2*15M > 20MiB, aria2 does not split file and download it using
   1 source.  You can append ``K`` or ``M`` (1K = 1024, 1M = 1024K).
-  Possible Values: ``1M`` -``1024M`` Default: ``20M``
+  See also :option:`--adaptive-min-split-size`, which shrinks the
+  effective value near the end of the download.
+  Possible Values: ``16K`` -``2047M`` Default: ``20M``
+
+.. option:: --adaptive-min-split-size [true|false]
+
+  Progressively reduce the effective :option:`--min-split-size <-k>` as
+  the download nears completion, down to a single piece
+  (:option:`--piece-length`).  Normally aria2 stops splitting off new
+  connections once the remaining contiguous range falls below
+  ``2*min-split-size``, so the tail of a file is fetched by a single
+  connection.  With this option enabled, the threshold is lowered as the
+  remaining data shrinks, so aria2 keeps splitting the remaining data
+  into new connections all the way to the end of the file.  The finest
+  granularity at the very end is one piece, so use a smaller
+  :option:`--piece-length` if you want more connections for the final
+  chunk.  Default: ``false``
 
 
 .. option:: --netrc-path=<FILE>
@@ -1563,7 +1581,7 @@ Advanced Options
   aria2 splits a file. All splits occur at multiple of this
   length. This option will be ignored in BitTorrent downloads.  It
   will be also ignored if Metalink file contains piece hashes.
-  Default: ``1M``
+  Possible Values: ``16K`` -``2047M`` Default: ``1M``
 
   .. note::
 
@@ -2118,6 +2136,7 @@ of URIs. These optional lines must start with white space(s).
 .. hlist::
   :columns: 3
 
+  * :option:`adaptive-min-split-size <--adaptive-min-split-size>`
   * :option:`all-proxy <--all-proxy>`
   * :option:`all-proxy-passwd <--all-proxy-passwd>`
   * :option:`all-proxy-user <--all-proxy-user>`

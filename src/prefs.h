@@ -270,6 +270,8 @@ extern PrefPtr PREF_MAX_CONNECTION_PER_SERVER;
 // value: 1*digit
 extern PrefPtr PREF_MIN_SPLIT_SIZE;
 // value: true | false
+extern PrefPtr PREF_ADAPTIVE_MIN_SPLIT_SIZE;
+// value: true | false
 extern PrefPtr PREF_CONDITIONAL_GET;
 // value: true | false
 extern PrefPtr PREF_SELECT_LEAST_USED_HOST;

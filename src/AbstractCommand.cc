@@ -891,7 +891,28 @@ int32_t AbstractCommand::calculateMinSplitSize() const
     return getDownloadContext()->getPieceLength();
   }
 
-  return getOption()->getAsInt(PREF_MIN_SPLIT_SIZE);
+  int32_t configured = getOption()->getAsInt(PREF_MIN_SPLIT_SIZE);
+
+  if (getOption()->getAsBool(PREF_ADAPTIVE_MIN_SPLIT_SIZE)) {
+    // Shrink the effective min-split-size as the download nears completion so
+    // that new connections keep splitting off the remaining data all the way
+    // to the end of the file. Floor at one piece (the atomic split unit) and
+    // cap at the configured value.
+    int32_t pieceLength = getDownloadContext()->getPieceLength();
+    int32_t split = getOption()->getAsInt(PREF_SPLIT);
+    int64_t pending = requestGroup_->getPendingLength();
+    // Aim for roughly `split` equal regions of what is left to download.
+    int64_t target = split > 0 ? pending / split : pending;
+    if (target < pieceLength) {
+      target = pieceLength;
+    }
+    if (target > configured) {
+      target = configured;
+    }
+    return static_cast<int32_t>(target);
+  }
+
+  return configured;
 }
 
 void AbstractCommand::setRequest(const std::shared_ptr<Request>& request)
