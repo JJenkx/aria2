@@ -145,7 +145,7 @@ jobs:
           PREFIX="$PWD/deps-prefix"
           JOBS=$(sysctl -n hw.ncpu)
           mkdir -p "$PREFIX" src-deps && cd src-deps
-          fetch() { curl -fL --retry 3 -o "$1" "$2"; }
+          fetch() { curl -fL --retry 6 --retry-all-errors --retry-delay 5 --connect-timeout 30 -o "$1" "$2"; }
 
           fetch zlib.tar.gz https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.gz
           tar xf zlib.tar.gz
